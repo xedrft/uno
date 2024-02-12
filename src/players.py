@@ -86,12 +86,24 @@ class Player(object):
             self.evaluate_hand(card_open)
             print(f'{self.name} draws {playable.print_card()}')
 
+    def skip_chain(self, deck, card_open):
+        if card_open.value in ["REV", "SKI"]:
+            for card in self.hand_play:
+                if card.value in ["REV", "SKI"]:
+                    self.card_play = card
+                    self.hand.remove(card)
+                    self.hand_play.remove(card)
+                    deck.discard(card)
+                    print(f'\n{self.name} plays {card.print_card()}')
+                    return True
+
     def unfavor_wild(self):
         if len(self.hand_play) >= 2:
             for value in self.hand_play:
                 if value.value in ["COL", "PL4"]:
                     self.hand_play.remove(value)
                     return value
+
     def play_highest(self, deck):
         points = {i: i for i in range(0, 10)}
         points.update({"REV": 20, "SKI": 20, "PL2": 20, "COL": 50, "PL4": 50})
@@ -132,6 +144,11 @@ class Player(object):
         """
         if conf.skill["unfavor_wild"] and self.name == conf.player_name_1:
             self.unfavor_wild()
+
+        if conf.skill["skip_chain"] and self.name == conf.player_name_1:
+            if self.skip_chain(deck, card_open):
+                self.skip_chain(deck, card_open)
+                return
 
         if conf.skill["highest_card"] and self.name == conf.player_name_1:
             self.play_highest(deck)

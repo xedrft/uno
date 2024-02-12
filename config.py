@@ -1,6 +1,6 @@
 params = {
     "iterations": 10000,
-    "debugging": False,  # Plays only one game with logging when True
+    "debugging": False,  # Plays only one game with logs when True
 }
 
 player_name_1 = "Skill"
@@ -8,7 +8,8 @@ player_name_2 = "Luck"
 skill = {
     "wild_color": False,  # Picks the color the player has most of (when has wild/plus 4 card)
     "highest_card": False,  # Picks the highest valued card to play
-    "unfavor_wild": False  # If another card besides wild playable, plays it
+    "unfavor_wild": False,  # If another card besides wild playable, plays it
+    "skip_chain": True
 }
 
 luck = {
