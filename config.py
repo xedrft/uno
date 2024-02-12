@@ -6,8 +6,8 @@ params = {
 player_name_1 = "Skill"
 player_name_2 = "Luck"
 skill = {
-    "wild_color": True,  # Picks the color the player has most of (when has wild/plus card)
-    "highest_card": True  # Picks the highest valued card to play
+    "wild_color": False,  # Picks the color the player has most of (when has wild/plus card)
+    "highest_card": False  # Picks the highest valued card to play
 }
 
 luck = {
