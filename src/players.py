@@ -68,7 +68,7 @@ class Player(object):
                 deck.shuffle()
         i = -1
         playable = deck.cards[i]
-        while (not playable.evaluate_card(card_open.color, card_open.value)) and len(deck.cards) > abs(i - 1):
+        while (not playable.evaluate_card(card_open.color, card_open.value)) and len(deck.cards) > abs(i):
             i -= 1
             print(len(deck.cards))
             print(i)
