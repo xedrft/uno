@@ -39,29 +39,22 @@ class Player(object):
         self.evaluate_hand(card_open)
         print (f'{self.name} draws {card.print_card()}')
         
+    def play_highest(self, deck):
+        points = {i: i for i in range(0, 10)}
+        points.update({"REV": 20, "SKI": 20, "PL2": 20, "COL": 50, "PL4": 50})
+        highest = self.hand_play[0]
+        for card in self.hand_play[1:]:
+            if points[card.value] > points[highest.value]:
+                highest = card
+        self.card_play = highest
+        self.hand.remove(highest)
+        self.hand_play.remove(highest)
+        deck.discard(highest)
+        print(f'\n{self.name} plays {highest.print_card()}')
 
+        self.wild_choice()
 
-    def play_rand(self, deck, card_open):
-        """
-        Reflecting a players' random move, that consists of:
-            - Shuffling players' hand cards
-            - Lopping through hand cards and choosing the first available hand card to be played
-            - Remove card from hand & replace card_open with it
-        
-        Required parameters: deck as deck
-        """
-
-
-        random.shuffle(self.hand_play)
-        for card in self.hand:
-            if card == self.hand_play[-1]:
-                self.card_play = card
-                self.hand.remove(card)
-                self.hand_play.pop()
-                deck.discard(card)
-                print (f'\n{self.name} plays {card.print_card()}')
-                break
-
+    def wild_choice(self):
         if conf.skill["wild_color"]:
             if self.name == conf.player_name_1:
                 if (self.card_play.color == "WILD"):
@@ -72,6 +65,32 @@ class Player(object):
         else:
             if (self.card_play.color == "WILD") or (self.card_play.value == "PL4"):
                 self.card_play.color = random.choice(["RED","GRE","BLU","YEL"])
+
+    def play_rand(self, deck, card_open):
+
+        """
+        Reflecting a players' random move, that consists of:
+            - Shuffling players' hand cards
+            - Lopping through hand cards and choosing the first available hand card to be played
+            - Remove card from hand & replace card_open with it
+        
+        Required parameters: deck as deck
+        """
+        if conf.skill["highest_card"] and self.name == conf.player_name_1:
+            self.play_highest(deck)
+            return
+        random.shuffle(self.hand_play)
+        for card in self.hand:
+            if card == self.hand_play[-1]:
+                self.card_play = card
+                self.hand.remove(card)
+                self.hand_play.pop()
+                deck.discard(card)
+                print (f'\n{self.name} plays {card.print_card()}')
+                break
+
+        self.wild_choice()
+
 
     def play_counter(self, deck, card_open, plus_card):
         """

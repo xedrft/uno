@@ -1,12 +1,13 @@
 params = {
     "iterations": 10000,
-    "logging": False,
+    "debugging": False,
 }
 
 player_name_1 = "Skill"
 player_name_2 = "Luck"
 skill = {
-    "wild_color": False  # Picks the color the player has most of (when has wild/plus card)
+    "wild_color": False,  # Picks the color the player has most of (when has wild/plus card)
+    "highest_card": True  # Picks the highest valued card to play
 }
 
 luck = {
