@@ -1,5 +1,3 @@
-import time
-
 from src.players import Player
 from src.turn import Turn
 from src.cards import Card, Deck
