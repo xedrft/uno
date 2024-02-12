@@ -42,15 +42,15 @@ class Player(object):
     def play_highest(self, deck):
         points = {i: i for i in range(0, 10)}
         points.update({"REV": 20, "SKI": 20, "PL2": 20, "COL": 50, "PL4": 50})
-        highest = self.hand_play[0]
-        for card in self.hand_play[1:]:
-            if points[card.value] > points[highest.value]:
-                highest = card
-        self.card_play = highest
-        self.hand.remove(highest)
-        self.hand_play.remove(highest)
-        deck.discard(highest)
-        print(f'\n{self.name} plays {highest.print_card()}')
+
+        value = max(points[card.value] for card in self.hand_play)
+        index = list(points[card.value] for card in self.hand_play).index(value)
+
+        self.card_play = self.hand_play[index]
+        self.hand.remove(self.card_play)
+        self.hand_play.remove(self.card_play)
+        deck.discard(self.card_play)
+        print(f'\n{self.name} plays {self.card_play.print_card()}')
 
         self.wild_choice()
 
