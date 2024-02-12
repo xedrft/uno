@@ -65,6 +65,12 @@ class Player(object):
             else:
                 deck.cards = deck.cards_disc
                 deck.cards_disc = []
+                for card in deck.cards:
+                    if card.value in ["COL", "PL4"]:
+                        card.color = "WILD"
+                        print("change")
+                        print(list(cardss.color for cardss in deck.cards))
+
                 deck.shuffle()
         i = -1
         playable = deck.cards[i]
@@ -80,7 +86,12 @@ class Player(object):
             self.evaluate_hand(card_open)
             print(f'{self.name} draws {playable.print_card()}')
 
-
+    def unfavor_wild(self):
+        if len(self.hand_play) >= 2:
+            for value in self.hand_play:
+                if value.value in ["COL", "PL4"]:
+                    self.hand_play.remove(value)
+                    return value
     def play_highest(self, deck):
         points = {i: i for i in range(0, 10)}
         points.update({"REV": 20, "SKI": 20, "PL2": 20, "COL": 50, "PL4": 50})
@@ -96,16 +107,17 @@ class Player(object):
 
         self.wild_choice()
 
+
     def wild_choice(self):
         if conf.skill["wild_color"]:
             if self.name == conf.player_name_1:
-                if self.card_play.color == "WILD":
+                if self.card_play.value in ["PL4", "COL"]:
                     self.card_play.color = self.choose_color()
             else:
-                if self.card_play.color == "WILD":
+                if self.card_play.value in ["PL4", "COL"]:
                     self.card_play.color = random.choice(["RED", "GRE", "BLU", "YEL"])
         else:
-            if (self.card_play.color == "WILD") or (self.card_play.value == "PL4"):
+            if self.card_play.value in ["PL4", "COL"]:
                 self.card_play.color = random.choice(["RED", "GRE", "BLU", "YEL"])
 
     def play_rand(self, deck, card_open):
@@ -118,9 +130,13 @@ class Player(object):
         
         Required parameters: deck as deck
         """
+        if conf.skill["unfavor_wild"] and self.name == conf.player_name_1:
+            self.unfavor_wild()
+
         if conf.skill["highest_card"] and self.name == conf.player_name_1:
             self.play_highest(deck)
             return
+
         random.shuffle(self.hand_play)
         for card in self.hand:
             if card == self.hand_play[-1]:
@@ -132,6 +148,7 @@ class Player(object):
                 break
 
         self.wild_choice()
+
 
     def play_counter(self, deck, card_open, plus_card):
         """
