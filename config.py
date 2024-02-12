@@ -17,6 +17,6 @@ luck = {
     "lucky_draws":  # Draws a playable card (based on the open card)
     {
             "state": False,  # Off/On
-            "luck": 0.2  # Probability this person will automatically draw a playable card
+            "luck": 0.2  # Probability this person will automatically draw a playable card !!!CHANGING THIS VALUE LEADS TO FATAL (or i am dumb)
         }
 }
