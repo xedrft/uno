@@ -59,12 +59,10 @@ class Deck(object):
     def draw_from_deck(self):
         if len(self.cards) == 0:
             if len(self.cards_disc) == 0:
-                # Both decks are empty, restart the game
                 print("Both decks are empty. Restarting the game.")
                 self.build()
                 self.shuffle()
             else:
-                # Move cards from discard to main deck and shuffle
                 self.cards = self.cards_disc
                 self.cards_disc = []
                 self.shuffle()

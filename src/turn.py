@@ -28,8 +28,8 @@ class Turn(object):
         print (f'Inital open card is {self.card_open.print_card()}\n') 
         
         for i in range (7):
-            self.player_1.draw(self.deck, self.card_open)
-            self.player_2.draw(self.deck, self.card_open)
+            self.player_1.draw_initial(self.deck, self.card_open)
+            self.player_2.draw_initial(self.deck, self.card_open)
             
     def action(self, player, opponent):
         """

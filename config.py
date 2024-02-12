@@ -11,5 +11,10 @@ skill = {
 }
 
 luck = {
-    "always_first": False  # Always goes first
+    "always_first": False,  # Always goes first
+    "lucky_draws": # Whether the player automatically draws a playable card (based on the open card)
+        {
+            "state": True, # Off/On
+            "luck": 0.2 # Percent of times this person will automatically draw a playable card
+        }
 }
