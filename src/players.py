@@ -1,8 +1,6 @@
 import random
 from src.utils import underline
 import config as conf
-from src.cards import Deck
-
 class Player(object):
     """
     Player consists of a list of cards representing a players hand cards.
@@ -58,26 +56,11 @@ class Player(object):
 
     def draw_with_luck(self, deck, card_open):
         if len(deck.cards) == 0:
-            if len(deck.cards_disc) == 0:
-                print("Both decks are empty. Restarting the game.")
-                deck.build()
-                deck.shuffle()
-            else:
-                deck.cards = deck.cards_disc
-                deck.cards_disc = []
-                for card in deck.cards:
-                    if card.value in ["COL", "PL4"]:
-                        card.color = "WILD"
-                        print("change")
-                        print(list(cardss.color for cardss in deck.cards))
-
-                deck.shuffle()
+            deck.draw_from_deck()
         i = -1
         playable = deck.cards[i]
         while (not playable.evaluate_card(card_open.color, card_open.value)) and len(deck.cards) > abs(i):
             i -= 1
-            print(len(deck.cards))
-            print(i)
             playable = deck.cards[i]
         if not playable.evaluate_card(card_open.color, card_open.value):
             self.draw_initial(deck, card_open)

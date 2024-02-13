@@ -4,7 +4,6 @@ from src.cards import Card, Deck
 from src.utils import check_win, block_print, enable_print, bold
 import config as conf
 
-
 class Game(object):
     """
     A game reflects an iteration of turns, until one player fulfills the winning condition of 0 hand cards.
@@ -18,7 +17,10 @@ class Game(object):
         self.player_1 = Player(player_1_name)
         self.player_2 = Player(player_2_name)
         self.turn = Turn(
-            deck=Deck(),
+            deck=Deck(
+                player_1=self.player_1,
+                player_2=self.player_2
+            ),
             player_1=self.player_1,
             player_2=self.player_2,
         )

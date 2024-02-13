@@ -9,7 +9,7 @@ skill = {
     "wild_color": False,  # Picks the color the player has most of (when has wild/plus 4 card)
     "highest_card": False,  # Picks the highest valued card to play
     "unfavor_wild": False,  # If another card besides wild playable, plays it
-    "skip_chain": True
+    "skip_chain": False
 }
 
 luck = {
@@ -17,6 +17,6 @@ luck = {
     "lucky_draws":  # Draws a playable card (based on the open card)
     {
             "state": False,  # Off/On
-            "luck": 0.2  # Probability this person will automatically draw a playable card !!!CHANGING THIS VALUE LEADS TO FATAL (or i am dumb)
+            "luck": 0.2  # Probability this person will automatically draw a playable card
         }
 }
