@@ -27,6 +27,8 @@ class Game(object):
         self.turn_no = 0
         self.winner = 0
         self.points = 0
+        self.total_draws = 0
+        self.total_playable = 0
 
         # With each new game the starting player is switched, in order to make it fair
         while self.winner == 0:
@@ -48,6 +50,13 @@ class Game(object):
 
             player_act.show_hand()
             player_act.show_hand_play(card_open)
+            action = self.turn.action(
+                player=player_act,
+                opponent=player_pas,
+            )
+            self.total_draws += action[1]
+            self.total_playable += action[0]
+
             self.turn.action(
                 player=player_act,
                 opponent=player_pas,
@@ -118,12 +127,14 @@ def tournament(tournament_iterations, comment):
                 comment=comment
             )
 
-    return game.winner, game.points
+    return game.winner, game.points, game.total_playable, game.total_draws
 
 
 def real(iterations, comment):
     n = 0
     winner, games = "", 0
+    playable = 0
+    total = 0
     for i in range(iterations):
         points1 = 0
         points2 = 0
@@ -136,6 +147,8 @@ def real(iterations, comment):
                 points1 += points[1]
             else:
                 points2 += points[1]
+            playable += points[2]
+            total += points[3]
         points_difference = points1 - points2
         if points1 >= 500:
             winner = conf.player_name_1
@@ -153,4 +166,4 @@ def real(iterations, comment):
             enable_print()
         games = gameCount
 
-    return winner, games, points_difference, n
+    return winner, games, points_difference, n, playable, total

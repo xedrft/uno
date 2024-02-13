@@ -1,9 +1,10 @@
-import os
+import time
 import pandas as pd
 import numpy as np
+import os
 from multiprocessing import Pool, cpu_count
-import time
 from src.game import real
+from src.players import Player
 import config as conf
 
 if conf.params["debugging"]:
@@ -59,7 +60,7 @@ else:
         with Pool(cpu_count()) as pool:
             runs = pool.map(simulate_game, range(iterations))
 
-        winners, games, point_differences, count = zip(*runs)
+        winners, games, point_differences, count, playable, total = zip(*runs)
         count = sum(count)
 
         timer_end = time.time()
@@ -87,7 +88,8 @@ else:
         with open("assets/results.csv", 'a') as f:
             f.write(
                 f'\nTotal Point Difference, {total_point_difference}'
-                f'\nPoint Difference Per Game, {total_point_difference / iterations}')
+                f'\nPoint Difference Per Game, {total_point_difference / iterations}'
+                f'\nChance of Playable Card, {sum(playable)/sum(total)}')
 
 
     if __name__ == "__main__":

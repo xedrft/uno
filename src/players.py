@@ -1,5 +1,5 @@
 import random
-from src.utils import underline
+from src.utils import underline, enable_print, block_print
 import config as conf
 class Player(object):
     """
@@ -13,6 +13,7 @@ class Player(object):
         self.hand_play = list()
         self.card_play = 0
         self.action = 0
+
 
     def evaluate_hand(self, card_open):
         """
@@ -29,6 +30,7 @@ class Player(object):
         """
         Initial draws (no "lucky draw")
         """
+
         card = deck.draw_from_deck()
         self.hand.append(card)
         self.evaluate_hand(card_open)
@@ -54,6 +56,7 @@ class Player(object):
         self.evaluate_hand(card_open)
         print(f'{self.name} draws {card.print_card()}')
 
+
     def draw_with_luck(self, deck, card_open):
         if len(deck.cards) == 0:
             deck.draw_from_deck()
@@ -68,6 +71,7 @@ class Player(object):
             self.hand.append(playable)
             self.evaluate_hand(card_open)
             print(f'{self.name} draws {playable.print_card()}')
+
 
     def skip_chain(self, deck, card_open):
         if card_open.value in ["REV", "SKI"]:
