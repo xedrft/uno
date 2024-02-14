@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.11 (uno-card-game-rl-main)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (uno-card-game-rl-main)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="python3114" project-jdk-type="Python SDK" />
 </project>
