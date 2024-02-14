@@ -11,7 +11,7 @@ skill = {
     "wild_color": False,  # Picks the color the player has most of (when has wild/plus 4 card)
     "highest_card": False,  # Picks the highest valued card to play
     "unfavor_wild": False,  # If another card besides wild playable, plays it
-    "skip_chain": False
+    "skip_chain": False  # If one reverse/skip played, keep playing them
 }
 
 # These apply to the luck player only

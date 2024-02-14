@@ -4,17 +4,9 @@ import numpy as np
 import os
 from multiprocessing import Pool, cpu_count
 from src.game import real
-from src.players import Player
 import config as conf
 
-if conf.params["debugging"]:
-    import os
-    import pandas as pd
-    import numpy as np
-
-    from src.game import real
-    import config as conf
-
+if conf.params["debugging"]:git
 
     def main():
 
