@@ -6,7 +6,7 @@ from multiprocessing import Pool, cpu_count
 from src.game import real
 import config as conf
 
-if conf.params["debugging"]:git
+if conf.params["debugging"]:
 
     def main():
 
