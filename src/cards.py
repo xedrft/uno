@@ -1,5 +1,4 @@
 import random
-import config as conf
 class Card(object):
     """
     Card is represented as tuple with properties 'color' and 'value'.

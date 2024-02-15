@@ -1,6 +1,7 @@
 import random
-from src.utils import underline, enable_print, block_print
+from src.utils import underline
 import config as conf
+from collections import Counter
 class Player(object):
     """
     Player consists of a list of cards representing a players hand cards.
@@ -13,6 +14,11 @@ class Player(object):
         self.hand_play = list()
         self.card_play = 0
         self.action = 0
+        self.majority_color = list()
+
+    def return_hand(self):
+        return self.hand
+
 
 
     def evaluate_hand(self, card_open):
@@ -25,6 +31,21 @@ class Player(object):
         for card in self.hand:
             if card.evaluate_card(card_open.color, card_open.value):
                 self.hand_play.append(card)
+        self.majority_color.clear()
+        counter = Counter(list(card.color for card in self.hand_play))
+        self.majority_color =  list(value for value in counter)
+
+    def draw_initial_luck(self, deck, card_open):
+        i = -1
+        action = deck.cards[i]
+        while (deck.cards[i].value not in ["PL2", "PL4", "REV", "SKI", "COL"]):
+            i -= 1
+            action = deck.cards[i]
+        self.hand.append(action)
+        self.evaluate_hand(card_open)
+        print(f'{self.name} draws {action.print_card()}')
+        
+            
 
     def draw_initial(self, deck, card_open):
         """
@@ -118,8 +139,21 @@ class Player(object):
         else:
             if self.card_play.value in ["PL4", "COL"]:
                 self.card_play.color = random.choice(["RED", "GRE", "BLU", "YEL"])
+    
+    
+    def plus_uno(self, deck, opponent):
+        if len(opponent) <= 3:
+            for card in self.hand_play:
+                if card.value in ["PL4", "PL2"]:
+                    self.card_play = card
+                    self.hand.remove(card)
+                    self.hand_play.remove(card)
+                    deck.discard(card)
+                    print(f'\n{self.name} plays {card.print_card()}')
+                    return True
 
-    def play_rand(self, deck, card_open):
+
+    def play_rand(self, deck, card_open, opponent):
 
         """
         Reflecting a players' random move, that consists of:
@@ -129,13 +163,17 @@ class Player(object):
         
         Required parameters: deck as deck
         """
-        if conf.skill["unfavor_wild"] and self.name == conf.player_name_1:
+        if conf.skill["plus_uno"] and self.name == conf.player_name_1:
+            if self.plus_uno(deck, opponent):
+                return
+        
+        if conf.skill["disfavor_wild"] and self.name == conf.player_name_1:
             self.unfavor_wild()
 
         if conf.skill["skip_chain"] and self.name == conf.player_name_1:
             if self.skip_chain(deck, card_open):
-                self.skip_chain(deck, card_open)
                 return
+            
 
         if conf.skill["highest_card"] and self.name == conf.player_name_1:
             self.play_highest(deck)

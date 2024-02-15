@@ -1,6 +1,6 @@
 from src.cards import Card
 from src.utils import check_win
-
+import config as conf
 
 class Turn(object):
     """
@@ -21,6 +21,7 @@ class Turn(object):
         self.start_up()
         self.playable = 0
         self.total = 0
+        self.player_pas_hand = 0
 
     def start_up(self):
         while self.card_open.value not in range(0,10):
@@ -29,9 +30,17 @@ class Turn(object):
 
         print (f'Inital open card is {self.card_open.print_card()}\n')
 
-        for i in range (7):
+        for _ in range (7):
             self.player_1.draw_initial(self.deck, self.card_open)
-            self.player_2.draw_initial(self.deck, self.card_open)
+        if conf.luck["initial_cards"]["state"]:
+            for _ in range(conf.luck["initial_cards"]["luck"]):
+                self.player_2.draw_initial_luck(self.deck, self.card_open)
+            for _ in range(7 - conf.luck["initial_cards"]["luck"]):
+                self.player_2.draw_initial(self.deck, self.card_open)
+        else:
+            for _ in range(7):
+                self.player_2.draw_initial(self.deck, self.card_open)
+
 
     def action(self, player, opponent):
         """
@@ -42,16 +51,16 @@ class Turn(object):
         player_act = player
         player_pas = opponent
         player_act.evaluate_hand(self.card_open)
-
+        self.player_pas_hand = player_pas.return_hand()
         self.count = 0
 
         # (1) When player can play a card directly
         if len(player_act.hand_play) > 0:
 
             if player_act == self.player_1:
-                player_act.play_rand(self.deck, self.card_open)
+                player_act.play_rand(self.deck, self.card_open, self.player_pas_hand)
             else:
-                player_act.play_rand(self.deck, self.card_open)
+                player_act.play_rand(self.deck, self.card_open, self.player_pas_hand)
 
             self.card_open = player_act.card_play
             player_act.evaluate_hand(self.card_open)
@@ -66,7 +75,7 @@ class Turn(object):
             # (2a) When player draw a card that is finally playable
             if len(player_act.hand_play) > 0:
 
-                player_act.play_rand(self.deck, self.card_open)
+                player_act.play_rand(self.deck, self.card_open, self.player_pas_hand)
                 if player_act == self.player_2:
                     self.playable += 1
                 self.card_open = player_act.card_play
