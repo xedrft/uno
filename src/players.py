@@ -1,8 +1,7 @@
 import random
 from src.utils import underline
-from collections import Counter
-
 import json
+
 with open('config.json', 'r') as file:
     data = json.load(file)
 
@@ -47,9 +46,7 @@ class Player(object):
         for card in self.hand:
             if card.evaluate_card(card_open.color, card_open.value):
                 self.hand_play.append(card)
-        self.majority_color.clear()
-        counter = Counter(list(card.color for card in self.hand_play))
-        self.majority_color =  list(value for value in counter)
+
 
     def draw_initial_luck(self, deck, card_open):
         i = -1

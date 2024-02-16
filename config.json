@@ -1,6 +1,6 @@
 {
     "params": {
-        "iterations": 1000,
+        "iterations": 100000,
         "debugging": 0
     },
     "player_name_1": "Skill",
@@ -9,7 +9,7 @@
         "wild_color": 0,
         "highest_card": 0,
         "disfavor_wild": 0,
-        "skip_chain": 0,
+        "skip_chain": 1,
         "plus_uno": 0
     },
     "luck": {

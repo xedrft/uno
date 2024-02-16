@@ -38,52 +38,6 @@ with open('config.json', 'r') as file:
 debugging = data["params"]["debugging"]
 iterations = data["params"]["iterations"]
 
-# if debugging:
-
-#     def main():
-
-#         run = real(
-#             iterations=1,
-#             comment=debugging
-#         )
-
-#         result = pd.concat([
-#             pd.Series(run[0], name='winner'),
-#             pd.Series(run[1], name='games'),
-#             pd.Series(run[2], name='point_difference')
-#         ], axis=1)
-import json
-
-def alter_skill(value, key):
-    with open("config.json", "r+") as config:
-        content = json.load(config)
-        content["skill"][key] = value
-        config.seek(0)
-        json.dump(content, config, indent=4)
-        config.truncate()
-
-def alter_luck(value, key):
-    with open("config.json", "r+") as config:
-        content = json.load(config)
-        content["luck"][key] = value
-        config.seek(0)
-        json.dump(content, config, indent=4)
-        config.truncate()
-
-def alteralter(value, key, key1):
-    with open("config.json", "r+") as config:
-        content = json.load(config)
-        content["luck"][key][key1] = value
-        config.seek(0)
-        json.dump(content, config, indent=4)
-        config.truncate()
-
-
-with open('config.json', 'r') as file:
-    data = json.load(file)
-
-debugging = data["params"]["debugging"]
-iterations = data["params"]["iterations"]
 
 # if debugging:
 
@@ -124,18 +78,7 @@ iterations = data["params"]["iterations"]
 # else:
 def simulate_game(iteration):
     return real(iterations=1, comment=debugging)
-# else:
-def simulate_game(iteration):
-    return real(iterations=1, comment=debugging)
 
-
-def main():
-    with open('config.json', 'r') as file:
-        data = json.load(file)
-
-    iterations = data["params"]["iterations"]
-    skill = data["skill"]
-    luck = data["luck"]
 def main():
     with open('config.json', 'r') as file:
         data = json.load(file)
@@ -145,28 +88,22 @@ def main():
     luck = data["luck"]
 
     timer_start = time.time()
-    timer_start = time.time()
+
 
     with Pool(cpu_count()) as pool:
         runs = pool.map(simulate_game, range(iterations))
-    with Pool(cpu_count()) as pool:
-        runs = pool.map(simulate_game, range(iterations))
+
 
     winners, games, point_differences, count, playable, total = zip(*runs)
     count = sum(count)
-    winners, games, point_differences, count, playable, total = zip(*runs)
-    count = sum(count)
+
 
     timer_end = time.time()
     timer_dur = timer_end - timer_start
     print(
         f'Execution lasted {round(timer_dur / 60, 2)} minutes ({round(count / timer_dur, 2)} games per second, '
         f'{round(iterations / timer_dur, 2)} iterations per second)')
-    timer_end = time.time()
-    timer_dur = timer_end - timer_start
-    print(
-        f'Execution lasted {round(timer_dur / 60, 2)} minutes ({round(count / timer_dur, 2)} games per second, '
-        f'{round(iterations / timer_dur, 2)} iterations per second)')
+
 
     result = pd.DataFrame({
         'winner': winners,
@@ -175,32 +112,16 @@ def main():
         'playable_draws' : playable,
         'total_draws' : total
     })
-    result = pd.DataFrame({
-        'winner': winners,
-        'games': games,
-        'point_difference': point_differences,
-        'playable_draws' : playable,
-        'total_draws' : total
-    })
-
-    result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
-    result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
     result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
     result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
 
-    result["points_difference_per_game"] = pd.Series([sum(result["point_difference"][:i + 1]) / (i + 1) for i in result.index])
-    result["points_difference_per_game"] = pd.Series([sum(result["point_difference"][:i + 1]) / (i + 1) for i in result.index])
+    result["points_difference_per_game"] = result["point_difference"].cumsum() / (result.index + 1)
+    result["chance_of_playable_draw"] = result["playable_draws"].cumsum() / result["total_draws"].cumsum()
 
-    result["chance_of_playable_draw"] = pd.Series([sum(result["playable_draws"][:i + 1]) / sum(result["total_draws"][:i + 1]) for i in result.index])
-    result["chance_of_playable_draw"] = pd.Series([sum(result["playable_draws"][:i + 1]) / sum(result["total_draws"][:i + 1]) for i in result.index])
 
     if not os.path.exists("assets"):
         os.makedirs("assets")
-    
-    
-    if not os.path.exists("assets"):
-        os.makedirs("assets")
-    
+
     
 
     name = []
@@ -209,20 +130,7 @@ def main():
             name.append("1")
         else:
             name.append("0")
-    name = []
-    for key in skill:
-        if skill[key]:
-            name.append("1")
-        else:
-            name.append("0")
 
-    for key in luck:
-        if isinstance(luck[key], int) and luck[key]:
-            name.append("1")
-        elif isinstance(luck[key], dict) and luck[key]["state"]:
-            name.append(f"1-{luck[key]["luck"]}")
-        else:
-            name.append("0")
     for key in luck:
         if isinstance(luck[key], int) and luck[key]:
             name.append("1")
