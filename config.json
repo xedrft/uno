@@ -1,0 +1,26 @@
+{
+    "params": {
+        "iterations": 1000,
+        "debugging": 0
+    },
+    "player_name_1": "Skill",
+    "player_name_2": "Luck",
+    "skill": {
+        "wild_color": 0,
+        "highest_card": 0,
+        "disfavor_wild": 0,
+        "skip_chain": 0,
+        "plus_uno": 0
+    },
+    "luck": {
+        "always_first": 0,
+        "lucky_draws": {
+            "state": 0,
+            "luck": 0.5
+        },
+        "initial_cards": {
+            "state": 0,
+            "luck": 7
+        }
+    }
+}

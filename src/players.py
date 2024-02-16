@@ -1,7 +1,23 @@
 import random
 from src.utils import underline
-import config as conf
 from collections import Counter
+
+import json
+with open('config.json', 'r') as file:
+    data = json.load(file)
+
+draw_state = data["luck"]["lucky_draws"]["state"]
+draw_luck = data["luck"]["lucky_draws"]["luck"]
+unfavor = data["skill"]["disfavor_wild"]
+color = data["skill"]["wild_color"]
+highest = data["skill"]["highest_card"]
+skip = data["skill"]["skip_chain"]
+plus = data["skill"]["plus_uno"]
+player_name_1 = data["player_name_1"]
+player_name_2 = data["player_name_2"]
+
+
+
 class Player(object):
     """
     Player consists of a list of cards representing a players hand cards.
@@ -67,9 +83,7 @@ class Player(object):
 
         # Checks for: if there is lucky_draw on, if it is player 2,
         # and then occurs at a chance given by the value in config
-        if (conf.luck["lucky_draws"]["state"] and
-                self.name == conf.player_name_2 and
-                random.random() <= conf.luck["lucky_draws"]["luck"]):
+        if draw_state and self.name == player_name_2 and random.random() <= draw_luck:
             self.draw_with_luck(deck, card_open)
             return
         card = deck.draw_from_deck()
@@ -129,8 +143,8 @@ class Player(object):
 
 
     def wild_choice(self):
-        if conf.skill["wild_color"]:
-            if self.name == conf.player_name_1:
+        if color:
+            if self.name == player_name_1:
                 if self.card_play.value in ["PL4", "COL"]:
                     self.card_play.color = self.choose_color()
             else:
@@ -163,19 +177,19 @@ class Player(object):
         
         Required parameters: deck as deck
         """
-        if conf.skill["plus_uno"] and self.name == conf.player_name_1:
+        if plus and self.name == player_name_1:
             if self.plus_uno(deck, opponent):
                 return
         
-        if conf.skill["disfavor_wild"] and self.name == conf.player_name_1:
+        if unfavor and self.name == player_name_1:
             self.unfavor_wild()
 
-        if conf.skill["skip_chain"] and self.name == conf.player_name_1:
+        if skip and self.name == player_name_1:
             if self.skip_chain(deck, card_open):
                 return
             
 
-        if conf.skill["highest_card"] and self.name == conf.player_name_1:
+        if highest and self.name == player_name_1:
             self.play_highest(deck)
             return
 

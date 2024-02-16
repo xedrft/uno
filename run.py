@@ -5,115 +5,151 @@ import os
 from multiprocessing import Pool, cpu_count
 from src.game import real
 import config as conf
+import json
+
+def alter_skill(value, key):
+    with open("config.json", "r+") as config:
+        content = json.load(config)
+        content["skill"][key] = value
+        config.seek(0)
+        json.dump(content, config, indent=4)
+        config.truncate()
+
+def alter_luck(value, key):
+    with open("config.json", "r+") as config:
+        content = json.load(config)
+        content["luck"][key] = value
+        config.seek(0)
+        json.dump(content, config, indent=4)
+        config.truncate()
+
+def alteralter(value, key, key1):
+    with open("config.json", "r+") as config:
+        content = json.load(config)
+        content["luck"][key][key1] = value
+        config.seek(0)
+        json.dump(content, config, indent=4)
+        config.truncate()
 
 
-if conf.params["debugging"]:
+with open('config.json', 'r') as file:
+    data = json.load(file)
 
-    def main():
+debugging = data["params"]["debugging"]
+iterations = data["params"]["iterations"]
 
-        run = real(
-            iterations=1,
-            comment=conf.params['debugging']
-        )
+# if debugging:
 
-        result = pd.concat([
-            pd.Series(run[0], name='winner'),
-            pd.Series(run[1], name='games'),
-            pd.Series(run[2], name='point_difference')
-        ], axis=1)
+#     def main():
 
-        result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
-        result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
+#         run = real(
+#             iterations=1,
+#             comment=debugging
+#         )
+
+#         result = pd.concat([
+#             pd.Series(run[0], name='winner'),
+#             pd.Series(run[1], name='games'),
+#             pd.Series(run[2], name='point_difference')
+#         ], axis=1)
+
+#         result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
+#         result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
 
 
-        if not os.path.exists("assets"):
-            os.makedirs("assets")
+#         if not os.path.exists("assets"):
+#             os.makedirs("assets")
 
-        result.to_csv("assets/results.csv", index=False)
+#         result.to_csv("assets/results.csv", index=False)
     
-    if __name__ == "__main__":
-        main()
+#     if __name__ == "__main__":
+#         main()
 
 
     
-else:
-    def simulate_game(iteration):
-        return real(iterations=1, comment=conf.params['debugging'])
+# else:
+def simulate_game(iteration):
+    return real(iterations=1, comment=debugging)
 
 
-    def main():
-        iterations = conf.params['iterations']
+def main():
+    with open('config.json', 'r') as file:
+        data = json.load(file)
 
-        timer_start = time.time()
+    iterations = data["params"]["iterations"]
+    skill = data["skill"]
+    luck = data["luck"]
 
-        with Pool(cpu_count()) as pool:
-            runs = pool.map(simulate_game, range(iterations))
+    timer_start = time.time()
 
-        winners, games, point_differences, count, playable, total = zip(*runs)
-        count = sum(count)
+    with Pool(cpu_count()) as pool:
+        runs = pool.map(simulate_game, range(iterations))
 
-        timer_end = time.time()
-        timer_dur = timer_end - timer_start
-        print(
-            f'Execution lasted {round(timer_dur / 60, 2)} minutes ({round(count / timer_dur, 2)} games per second, '
-            f'{round(iterations / timer_dur, 2)} iterations per second)')
+    winners, games, point_differences, count, playable, total = zip(*runs)
+    count = sum(count)
 
-        result = pd.DataFrame({
-            'winner': winners,
-            'games': games,
-            'point_difference': point_differences,
-            'playable_draws' : playable,
-            'total_draws' : total
-        })
+    timer_end = time.time()
+    timer_dur = timer_end - timer_start
+    print(
+        f'Execution lasted {round(timer_dur / 60, 2)} minutes ({round(count / timer_dur, 2)} games per second, '
+        f'{round(iterations / timer_dur, 2)} iterations per second)')
 
-        result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
-        result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
+    result = pd.DataFrame({
+        'winner': winners,
+        'games': games,
+        'point_difference': point_differences,
+        'playable_draws' : playable,
+        'total_draws' : total
+    })
 
-        result["points_difference_per_game"] = pd.Series([sum(result["point_difference"][:i + 1]) / (i + 1) for i in result.index])
+    result["win_rate"] = np.where(result["winner"] == conf.player_name_1, 1, 0)
+    result["win_rate"] = result["win_rate"].cumsum() / (result.index + 1)
 
-        result["chance_of_playable_draw"] = pd.Series([sum(result["playable_draws"][:i + 1]) / sum(result["total_draws"][:i + 1]) for i in result.index])
+    result["points_difference_per_game"] = pd.Series([sum(result["point_difference"][:i + 1]) / (i + 1) for i in result.index])
 
-        if not os.path.exists("assets"):
-            os.makedirs("assets")
-        
-        
+    result["chance_of_playable_draw"] = pd.Series([sum(result["playable_draws"][:i + 1]) / sum(result["total_draws"][:i + 1]) for i in result.index])
 
-        name = []
-        for key in conf.skill:
-            if conf.skill[key]:
-                name.append("1")
-            else:
-                name.append("0")
+    if not os.path.exists("assets"):
+        os.makedirs("assets")
+    
+    
 
-        for key in conf.luck:
-            if isinstance(conf.luck[key], bool) and conf.luck[key]:
-                name.append("1")
-            elif isinstance(conf.luck[key], dict) and conf.luck[key]["state"]:
-                name.append(f"1-{conf.luck[key]["luck"]}")
-            else:
-                name.append("0")
+    name = []
+    for key in skill:
+        if skill[key]:
+            name.append("1")
+        else:
+            name.append("0")
+
+    for key in luck:
+        if isinstance(luck[key], int) and luck[key]:
+            name.append("1")
+        elif isinstance(luck[key], dict) and luck[key]["state"]:
+            name.append(f"1-{luck[key]["luck"]}")
+        else:
+            name.append("0")
 
 
 
-        result.to_csv(f"assets/{"_".join(name)}.csv", index=False, mode='w')
-        
-    if __name__ == "__main__":
+    result.to_csv(f"assets/{"_".join(name)}.csv", index=False, mode='w')
+    
+if __name__ == "__main__":
+    main()
+    for param in conf.skill:
+        alter_skill(1, param)
         main()
-        for param in conf.skill:
-            conf.skill[param] = True
-            main()
-            conf.skill[param] = False
-        conf.luck["always_first"] = True
+        alter_skill(0, param)
+    alter_luck(1, "always_first")
+    main()
+    alter_luck(0, "always_first")
+    alteralter(1, "lucky_draws", "state")
+    for value in [round(0.05 * i, 2) for i in range(1,11)]:
+        alteralter(value, "lucky_draws", "luck")
         main()
-        conf.luck["always_first"] = False
-        conf.luck["lucky_draws"]["state"] = True
-        for value in [round(0.05 * i, 2) for i in range(1,11)]:
-            conf.luck["lucky_draws"]["luck"] = value
-            main()
-        conf.luck["lucky_draws"]["state"] = False
-        conf.luck["initial_cards"]["state"] = True 
-        for value in range(1,8):
-            conf.luck["initial_cards"]["luck"] = value
-            main()
-        conf.luck["initial_cards"] = False
+    alteralter(0, "lucky_draws", "state")
+    alteralter(1, "initial_cards", "state") 
+    for value in range(1,8):
+        alteralter(value, "initial_cards", "luck") 
+        main()
+    alteralter(0, "initial_cards", "state") 
 

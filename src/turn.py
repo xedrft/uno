@@ -1,6 +1,11 @@
 from src.cards import Card
 from src.utils import check_win
-import config as conf
+import json
+with open('config.json', 'r') as file:
+    data = json.load(file)
+
+initial_state = data["luck"]["initial_cards"]["state"]
+initial_luck = data["luck"]["initial_cards"]["luck"]
 
 class Turn(object):
     """
@@ -32,10 +37,10 @@ class Turn(object):
 
         for _ in range (7):
             self.player_1.draw_initial(self.deck, self.card_open)
-        if conf.luck["initial_cards"]["state"]:
-            for _ in range(conf.luck["initial_cards"]["luck"]):
+        if initial_state:
+            for _ in range(initial_luck):
                 self.player_2.draw_initial_luck(self.deck, self.card_open)
-            for _ in range(7 - conf.luck["initial_cards"]["luck"]):
+            for _ in range(7 - initial_luck):
                 self.player_2.draw_initial(self.deck, self.card_open)
         else:
             for _ in range(7):

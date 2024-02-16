@@ -29,5 +29,4 @@ luck = {
         "luck" : 3  # How many out of 7 cards will automatically be an action card
         }
 }
-sup = [0,1]
 

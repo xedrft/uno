@@ -2,7 +2,13 @@ from src.players import Player
 from src.turn import Turn
 from src.cards import Card, Deck
 from src.utils import check_win, block_print, enable_print, bold
-import config as conf
+import json
+with open('config.json', 'r') as file:
+    data = json.load(file)
+
+always_first = data["luck"]["always_first"]
+player_name_1 = data["player_name_1"]
+player_name_2 = data["player_name_2"]
 
 class Game(object):
     """
@@ -104,26 +110,26 @@ def tournament(tournament_iterations, comment):
 
     winner, points = "", 0
 
-    if conf.luck["always_first"]:
+    if always_first:
         game = Game(
-            player_1_name=conf.player_name_1,
-            player_2_name=conf.player_name_2,
-            starting_name=conf.player_name_2,
+            player_1_name=player_name_1,
+            player_2_name=player_name_2,
+            starting_name=player_name_2,
             comment=comment
         )
     else:
         if tournament_iterations % 2 == 1:
             game = Game(
-                player_1_name=conf.player_name_1,
-                player_2_name=conf.player_name_2,
-                starting_name=conf.player_name_2,
+                player_1_name=player_name_1,
+                player_2_name=player_name_2,
+                starting_name=player_name_2,
                 comment=comment
             )
         else:
             game = Game(
-                player_1_name=conf.player_name_1,
-                player_2_name=conf.player_name_2,
-                starting_name=conf.player_name_1,
+                player_1_name=player_name_1,
+                player_2_name=player_name_2,
+                starting_name=player_name_1,
                 comment=comment
             )
 
@@ -143,7 +149,7 @@ def real(iterations, comment):
             n += 1
             gameCount += 1
             points = tournament(n, comment)
-            if points[0] == conf.player_name_1:
+            if points[0] == player_name_1:
                 points1 += points[1]
             else:
                 points2 += points[1]
@@ -151,18 +157,18 @@ def real(iterations, comment):
             total += points[3]
         points_difference = points1 - points2
         if points1 >= 500:
-            winner = conf.player_name_1
+            winner = player_name_1
             if not comment:
                 block_print()
             print(bold(
-                f"\n{conf.player_name_1} has won in {gameCount} games, winning the opponent by {abs(points_difference)} points!"))
+                f"\n{player_name_1} has won in {gameCount} games, winning the opponent by {abs(points_difference)} points!"))
             enable_print()
         else:
-            winner = conf.player_name_2
+            winner = player_name_2
             if not comment:
                 block_print()
             print(bold(
-                f"\n{conf.player_name_2} has won in {gameCount} games, winning the opponent by {abs(points_difference)} points!"))
+                f"\n{player_name_2} has won in {gameCount} games, winning the opponent by {abs(points_difference)} points!"))
             enable_print()
         games = gameCount
 
